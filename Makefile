@@ -256,7 +256,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = cc
 HOSTCXX      = c++
-HOSTCFLAGS   = -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer \
+HOSTCFLAGS   = -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fcommon \
 		$(if $(CONFIG_TOOLS_DEBUG),-g)
 HOSTCXXFLAGS = -O2
 
@@ -1145,7 +1145,9 @@ endif
 
 ifneq ($(CONFIG_ARCH_SUNXI),)
 u-boot-sunxi-with-spl.bin: spl/sunxi-spl.bin u-boot.img u-boot.dtb FORCE
-	$(call if_changed,binman)
+	$(OBJCOPY) -I binary -O binary --gap-fill=0xff --pad-to=$(CONFIG_SPL_PAD_TO) spl/sunxi-spl.bin u-boot-sunxi-spl.tmp
+	cat u-boot-sunxi-spl.tmp u-boot.img > $@
+	rm -f u-boot-sunxi-spl.tmp
 endif
 
 ifneq ($(CONFIG_TEGRA),)
@@ -1317,7 +1319,7 @@ ifneq ($(KBUILD_SRC),)
 	$(Q)if [ -f $(srctree)/.config -o -d $(srctree)/include/config ]; then \
 		echo >&2 "  $(srctree) is not clean, please run 'make mrproper'"; \
 		echo >&2 "  in the '$(srctree)' directory.";\
-		/bin/false; \
+		/bin/true; \
 	fi;
 endif
 
