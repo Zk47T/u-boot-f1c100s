@@ -1,0 +1,10 @@
+*.o
+*.cmd
+*.bin
+*.img
+*.lds
+*.map
+*.srec
+*.sym
+*.su
+*.tmp
